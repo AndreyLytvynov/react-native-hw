@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -6,44 +8,104 @@ import {
   ImageBackground,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
-// import RegistrationScreen from "./screens/registrationScreen";
+
+const initialState = {
+  login: "",
+  email: "",
+  password: "",
+};
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <ImageBackground
-        style={styles.image}
-        source={require("./images/bg-registration.png")}
-      >
-        <View style={styles.form}>
-          <Text style={styles.formTitle}>Registration</Text>
-          <View>
-            <TextInput style={styles.input} textAlign={"center"} />
-          </View>
-          <View style={{ marginTop: 16 }}>
-            <TextInput
-              style={styles.input}
-              textAlign={"center"}
-              secureTextEntry={true}
-            />
-          </View>
-          <View style={{ marginTop: 16 }}>
-            <TextInput
-              style={styles.input}
-              textAlign={"center"}
-              secureTextEntry={true}
-            />
-          </View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.btnSubmit}>
-            <Text style={styles.btnTitle}>SIGN IN</Text>
-          </TouchableOpacity>
+  const [state, setState] = useState(initialState);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
-          <Text style={styles.btnLogin}>Уже есть аккаунтasdasdad? Войти</Text>
-        </View>
-      </ImageBackground>
-    </View>
-    // <RegistrationScreen />
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    console.log(state);
+    setState(initialState);
+  };
+
+  return (
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+        setIsShowKeyboard(false);
+      }}
+    >
+      <View style={styles.container}>
+        <ImageBackground
+          style={styles.image}
+          source={require("./images/bg-registration.png")}
+        >
+          <View
+            style={{
+              ...styles.form,
+              // paddingBottom: `${isShowKeyboard ? 2 : 20}`,
+            }}
+          >
+            <Text style={styles.formTitle}>Реєстрація</Text>
+            <View>
+              <TextInput
+                onFocus={() => setIsShowKeyboard(true)}
+                style={styles.input}
+                value={state.login}
+                placeholder={"Логін"}
+                placeholderTextColor={"#cbcbcb"}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, login: value }))
+                }
+              />
+            </View>
+            <View style={{ marginTop: 16 }}>
+              <TextInput
+                onFocus={() => setIsShowKeyboard(true)}
+                style={styles.input}
+                value={state.email}
+                placeholder={"Адреса електронної пошти"}
+                placeholderTextColor={"#cbcbcb"}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, email: value }))
+                }
+              />
+            </View>
+            <View style={{ marginTop: 16 }}>
+              <TextInput
+                onFocus={() => setIsShowKeyboard(true)}
+                style={styles.input}
+                secureTextEntry={true}
+                value={state.password}
+                placeholder={"Пароль"}
+                placeholderTextColor={"#cbcbcb"}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, password: value }))
+                }
+              />
+            </View>
+            <TouchableOpacity
+              style={{
+                ...styles.btnSubmit,
+                display: `${isShowKeyboard ? "none" : "flex"}`,
+              }}
+              onPress={keyboardHide}
+            >
+              <Text style={{ ...styles.btnTitle }}>Зареєструватись</Text>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                display: `${isShowKeyboard ? "none" : "flex"}`,
+              }}
+            >
+              <Text style={styles.btnLogin}>Вже є аккаунт? Увійти</Text>
+            </View>
+          </View>
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -58,6 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   input: {
+    paddingLeft: 10,
     borderWidth: 1,
     borderColor: "#f0f8ff",
     backgroundColor: "#F6F6F6",
@@ -65,6 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: "#f0f8ff",
     marginHorizontal: 16,
+    color: "black",
   },
   form: {
     paddingTop: 45,
@@ -91,6 +155,7 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
   },
   btnSubmit: {
+    // display: `${false ? "none" : "flex"}`,
     backgroundColor: "#FF6C00",
     height: 50,
     borderRadius: 100,
