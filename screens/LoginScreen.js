@@ -9,16 +9,14 @@ import {
 } from "react-native";
 
 const initialState = {
-  login: "",
   email: "",
   password: "",
 };
 
-export function RegistrationScreen() {
+export function LoginScreen() {
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [active, setIsActive] = useState({
-    login: false,
     email: false,
     password: false,
   });
@@ -40,36 +38,8 @@ export function RegistrationScreen() {
         style={{
           ...styles.avatar,
         }}
-      ></View>
-      <Text style={styles.formTitle}>Реєстрація</Text>
-      <View>
-        <TextInput
-          onFocus={() => {
-            setIsActive((prevState) => ({
-              ...prevState,
-              login: true,
-            }));
-            setIsShowKeyboard(true);
-          }}
-          onBlur={() => {
-            setIsActive((prevState) => ({
-              ...prevState,
-              login: false,
-            }));
-            setIsShowKeyboard(false);
-          }}
-          style={{
-            ...styles.input,
-            borderColor: active.login ? "#FF6C00" : "#E8E8E8",
-          }}
-          value={state.login}
-          placeholder={"Логін"}
-          placeholderTextColor={"#cbcbcb"}
-          onChangeText={(value) =>
-            setState((prevState) => ({ ...prevState, login: value }))
-          }
-        />
-      </View>
+      />
+      <Text style={styles.formTitle}>Увійти</Text>
       <View style={{ marginTop: 16 }}>
         <TextInput
           onFocus={() => {
@@ -168,6 +138,7 @@ const styles = StyleSheet.create({
     color: "#f0f8ff",
     marginHorizontal: 16,
     color: "black",
+    fontFamily: "Roboto-Regular",
   },
   form: {
     position: "relative",
@@ -185,11 +156,13 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 500,
     marginBottom: 33,
+    fontFamily: "Roboto-Medium",
   },
   inputTitle: {
     color: "#f0f8ff",
     marginBottom: 10,
     fontSize: 18,
+    fontFamily: "Roboto-Regular",
   },
   submitButton: {
     marginHorizontal: 16,
@@ -208,6 +181,7 @@ const styles = StyleSheet.create({
   btnTitle: {
     color: "#f0f8ff",
     fontSize: 16,
+    fontFamily: "Roboto-Regular",
   },
   btnLogin: {
     marginLeft: "auto",
