@@ -1,21 +1,13 @@
 import { useEffect, useState } from "react";
-
-import {
-  StyleSheet,
-  View,
-  ImageBackground,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
-
-import { RegistrationScreen } from "./screens/RegistrationScreen";
-import { LoginScreen } from "./screens/LoginScreen";
-
+import { NavigationContainer } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 
+import { useRoute } from "./router";
+
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const routing = useRoute({});
 
   useEffect(() => {
     async function prepare() {
@@ -40,33 +32,5 @@ export default function App() {
     return null;
   }
 
-  return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <View style={styles.container}>
-        <ImageBackground
-          style={styles.image}
-          source={require("./images/bg-registration.png")}
-        >
-          <LoginScreen />
-          {/* <RegistrationScreen /> */}
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
-  );
+  return <NavigationContainer>{routing}</NavigationContainer>;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  image: {
-    flex: 1,
-    resizeMode: "contain",
-    justifyContent: "flex-end",
-  },
-});
