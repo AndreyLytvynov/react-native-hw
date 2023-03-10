@@ -12,8 +12,8 @@ import { TouchableOpacity, Text } from "react-native";
 //icons import
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const AuthStack = createNativeStackNavigator();
 const MainTab = createBottomTabNavigator();
@@ -35,7 +35,7 @@ export const useRoute = (isAuth) => {
       }}
     >
       <MainTab.Screen
-        name="Post"
+        name="Posts"
         component={PostsScreen}
         options={{
           title: "Публікації",
@@ -52,7 +52,7 @@ export const useRoute = (isAuth) => {
               <MaterialIcons
                 name="logout"
                 size={25}
-                color="#BDBDBD"
+                color={color}
                 style={{ marginRight: 16 }}
               />
             </TouchableOpacity>
@@ -65,15 +65,15 @@ export const useRoute = (isAuth) => {
         options={{
           title: "Створити публікацію",
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="add-circle-outline" size={size} color="#BDBDBD" />
+            <Ionicons name="add-circle-outline" size={size} color={color} />
           ),
           headerLeft: ({ focused, color, size }) => (
             <TouchableOpacity>
               <AntDesign
                 name="arrowleft"
-                size={25}
-                color="#BDBDBD"
-                style={{ marginLeft: 16 }}
+                size={24}
+                color="black"
+                style={{ marginLeft: 10 }}
               />
             </TouchableOpacity>
           ),

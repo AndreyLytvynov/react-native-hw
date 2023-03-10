@@ -103,6 +103,7 @@ export function LoginScreen({ navigation }) {
               }
             />
           </View>
+
           <View
             style={{
               display: `${isShowKeyboard ? "none" : "flex"}`,
