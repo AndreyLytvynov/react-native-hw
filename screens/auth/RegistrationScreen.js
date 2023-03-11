@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -9,6 +10,7 @@ import {
   ImageBackground,
   TouchableWithoutFeedback,
 } from "react-native";
+import { authRegistration } from "../../redux/auth/authOperations";
 
 const initialState = {
   login: "",
@@ -25,10 +27,13 @@ export function RegistrationScreen({ navigation }) {
     password: false,
   });
 
-  const keyboardHide = () => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
     console.log(state);
+    dispatch(authRegistration(state));
     setState(initialState);
   };
 
@@ -147,7 +152,7 @@ export function RegistrationScreen({ navigation }) {
               style={{
                 ...styles.btnSubmit,
               }}
-              onPress={keyboardHide}
+              onPress={handleSubmit}
             >
               <Text style={{ ...styles.btnTitle }}>Зареєструватись</Text>
             </TouchableOpacity>

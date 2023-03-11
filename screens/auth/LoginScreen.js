@@ -10,6 +10,9 @@ import {
   ImageBackground,
 } from "react-native";
 
+import { useDispatch } from "react-redux";
+import { authLogin } from "../../redux/auth/authOperations";
+
 const initialState = {
   email: "",
   password: "",
@@ -22,11 +25,13 @@ export function LoginScreen({ navigation }) {
     email: false,
     password: false,
   });
+  const dispatch = useDispatch();
 
-  const keyboardHide = () => {
+  const handleSubmit = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
     console.log(state);
+    dispatch(authLogin(state));
     setState(initialState);
   };
 
@@ -113,9 +118,9 @@ export function LoginScreen({ navigation }) {
               style={{
                 ...styles.btnSubmit,
               }}
-              onPress={keyboardHide}
+              onPress={handleSubmit}
             >
-              <Text style={{ ...styles.btnTitle }}>Зареєструватись</Text>
+              <Text style={{ ...styles.btnTitle }}>Увійти</Text>
             </TouchableOpacity>
 
             <TouchableOpacity

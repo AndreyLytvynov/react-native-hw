@@ -39,11 +39,6 @@ export const CreateScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      await MediaLibrary.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-    (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
@@ -55,6 +50,14 @@ export const CreateScreen = ({ navigation }) => {
         longitude: location.coords.longitude,
       };
       setLocation(coords);
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+      setHasPermission(status === "granted");
     })();
   }, []);
 
