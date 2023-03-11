@@ -7,7 +7,7 @@ import { PostsScreen } from "./screens/main/PostsScreen";
 import { CreateScreen } from "./screens/main/CreateScreen";
 import { ProfileScreen } from "./screens/main/ProfileScreen";
 
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Image } from "react-native";
 
 //icons import
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -40,10 +40,9 @@ export const useRoute = (isAuth) => {
         options={{
           title: "Публікації",
           tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons
-              name="postage-stamp"
-              size={size}
-              color={color}
+            <Image
+              source={require("./assets/grid.png")}
+              style={{ height: 30, width: 30 }}
             />
           ),
 
@@ -64,19 +63,33 @@ export const useRoute = (isAuth) => {
         component={CreateScreen}
         options={{
           title: "Створити публікацію",
-          tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="add-circle-outline" size={size} color={color} />
-          ),
-          headerLeft: ({ focused, color, size }) => (
-            <TouchableOpacity>
-              <AntDesign
-                name="arrowleft"
-                size={24}
-                color="black"
-                style={{ marginLeft: 10 }}
+          tabBarIcon: ({ focused, color, size }) => {
+            if (focused) {
+              return (
+                <Image
+                  source={require("./assets/trash.png")}
+                  style={{ height: 40, width: 70 }}
+                />
+              );
+            }
+
+            return (
+              <Image
+                source={require("./assets/add.png")}
+                style={{ height: 40, width: 70 }}
               />
-            </TouchableOpacity>
-          ),
+            );
+          },
+          // headerLeft: ({ focused, color, size }) => (
+          //   <TouchableOpacity onPress={() => {}}>
+          //     <AntDesign
+          //       name="arrowleft"
+          //       size={24}
+          //       color="black"
+          //       style={{ marginLeft: 10 }}
+          //     />
+          //   </TouchableOpacity>
+          // ),
         }}
       />
       <MainTab.Screen
@@ -85,7 +98,10 @@ export const useRoute = (isAuth) => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="person" size={size} color={color} />
+            <Image
+              source={require("./assets/user.png")}
+              style={{ height: 30, width: 30 }}
+            />
           ),
         }}
       />

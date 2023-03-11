@@ -30,7 +30,7 @@ export const CreateScreen = ({ navigation }) => {
     try {
       const photo = await camera.takePictureAsync();
       const location = await Location.getCurrentPositionAsync();
-      console.log(location);
+      setLocation(location);
       setPhotoUri(photo.uri);
     } catch (err) {
       console.log(err);
@@ -67,7 +67,7 @@ export const CreateScreen = ({ navigation }) => {
 
   const sendPhoto = () => {
     if (!photoUri) return;
-    navigation.navigate("DefaultScreen", { photoUri, location });
+    navigation.navigate("DefaultScreen", { photoUri, location, state });
   };
 
   return (

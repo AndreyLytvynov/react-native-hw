@@ -18,6 +18,7 @@ export const PostsScreen = ({ route }) => {
       <NestedScreen.Screen
         name="DefaultScreen"
         component={DefaultScreenPosts}
+        options={{ headerShown: false }}
       />
       <NestedScreen.Screen name="MapScreen" component={MapScreen} />
       <NestedScreen.Screen name="CommentsScreen" component={CommentsScreen} />
