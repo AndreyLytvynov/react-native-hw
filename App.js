@@ -1,19 +1,16 @@
-import { useEffect, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
-import { useRoute } from "./router";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider } from "react-redux";
+import AuthScreen from "./screens/auth/AuthScreen";
 import { store } from "./redux/store";
-import db from "./firebase/config";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [user, setUser] = useState(null);
-
-  const routing = useRoute(user);
-
-  db.auth().onAuthStateChanged((user) => setUser(user));
 
   useEffect(() => {
     async function prepare() {
@@ -40,7 +37,9 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NavigationContainer>{routing}</NavigationContainer>
+      <NavigationContainer>
+        <AuthScreen />
+      </NavigationContainer>
     </Provider>
   );
 }

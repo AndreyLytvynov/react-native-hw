@@ -1,24 +1,24 @@
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   TextInput,
   TouchableOpacity,
-  Keyboard,
-  TouchableWithoutFeedback,
+  Text,
   ImageBackground,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
-
+import { authSignInUser } from "../../redux/authOperations";
 import { useDispatch } from "react-redux";
-import { authLogin } from "../../redux/auth/authOperations";
 
 const initialState = {
   email: "",
   password: "",
 };
 
-export function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation }) {
+  const [show, setShow] = useState(true);
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [active, setIsActive] = useState({
@@ -27,29 +27,24 @@ export function LoginScreen({ navigation }) {
   });
   const dispatch = useDispatch();
 
+  const passwordShow = () => {
+    if (show) {
+      return setShow(false);
+    }
+    return setShow(true);
+  };
+
   const handleSubmit = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-    console.log(state);
-    dispatch(authLogin(state));
-    setState(initialState);
+    dispatch(authSignInUser({ email: state.email, password: state.password }));
   };
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ImageBackground
-        style={styles.image}
         source={require("../../assets/bg-registration.png")}
+        style={styles.image}
       >
-        <View
-          style={{
-            ...styles.form,
-          }}
-        >
+        <View style={styles.form}>
           <Text style={styles.formTitle}>Увійти</Text>
           <View style={{ marginTop: 16 }}>
             <TextInput
@@ -67,16 +62,16 @@ export function LoginScreen({ navigation }) {
                 }));
                 setIsShowKeyboard(false);
               }}
+              value={state.email}
+              onChangeText={(value) =>
+                setState((prevState) => ({ ...prevState, email: value }))
+              }
+              placeholder={"Адреса електронної пошти"}
+              placeholderTextColor={"#cbcbcb"}
               style={{
                 ...styles.input,
                 borderColor: active.email ? "#FF6C00" : "#E8E8E8",
               }}
-              value={state.email}
-              placeholder={"Адреса електронної пошти"}
-              placeholderTextColor={"#cbcbcb"}
-              onChangeText={(value) =>
-                setState((prevState) => ({ ...prevState, email: value }))
-              }
             />
           </View>
           <View style={{ marginTop: 16 }}>
@@ -95,18 +90,21 @@ export function LoginScreen({ navigation }) {
                 }));
                 setIsShowKeyboard(false);
               }}
+              value={state.password}
+              onChangeText={(value) =>
+                setState((prevState) => ({ ...prevState, password: value }))
+              }
+              placeholder={"Пароль"}
+              placeholderTextColor={"#cbcbcb"}
+              secureTextEntry={show}
               style={{
                 ...styles.input,
                 borderColor: active.password ? "#FF6C00" : "#E8E8E8",
               }}
-              secureTextEntry={true}
-              value={state.password}
-              placeholder={"Пароль"}
-              placeholderTextColor={"#cbcbcb"}
-              onChangeText={(value) =>
-                setState((prevState) => ({ ...prevState, password: value }))
-              }
             />
+            <Text onPress={passwordShow} style={styles.textShow}>
+              {show ? "Показати" : "Сховати"}
+            </Text>
           </View>
 
           <View
@@ -123,11 +121,7 @@ export function LoginScreen({ navigation }) {
               <Text style={{ ...styles.btnTitle }}>Увійти</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Register");
-              }}
-            >
+            <TouchableOpacity onPress={() => navigation.navigate("auth")}>
               <Text style={styles.btnLogin}>
                 Не має акаунта? Зареєструватись
               </Text>
@@ -140,6 +134,28 @@ export function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    bottom: 0,
+    paddingLeft: 16,
+    paddingRight: 16,
+
+    backgroundColor: "#fff",
+    width: "100 %",
+    justifyContent: "flex-end",
+    paddingBottom: 30,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+  },
+
+  textShow: {
+    color: "#000",
+    position: "absolute",
+    top: 13,
+    right: 25,
+    fontSize: 16,
+    color: "#1B4371",
+  },
   image: {
     flex: 1,
     resizeMode: "cover",
@@ -157,6 +173,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontFamily: "Roboto-Regular",
   },
+
   form: {
     position: "relative",
     paddingTop: 32,
@@ -171,7 +188,6 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     color: "#212121",
     fontSize: 30,
-    fontWeight: 500,
     marginBottom: 33,
     fontFamily: "Roboto-Medium",
   },

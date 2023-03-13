@@ -1,16 +1,22 @@
 import React, { useState } from "react";
+import { storage } from "../../firebase/config";
+import { authSlice } from "../../redux/authReducer";
+import * as ImagePicker from "expo-image-picker";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { authSignUpUser, updateAvatar } from "../../redux/authOperations";
 import { useDispatch } from "react-redux";
+import Svg, { Circle, Path } from "react-native-svg";
 import {
   StyleSheet,
-  Text,
   View,
   TextInput,
   TouchableOpacity,
-  Keyboard,
+  Text,
+  Image,
   ImageBackground,
+  Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { authRegistration } from "../../redux/auth/authOperations";
 
 const initialState = {
   login: "",
@@ -18,7 +24,7 @@ const initialState = {
   password: "",
 };
 
-export function RegistrationScreen({ navigation }) {
+export default function RegistrationScreen({ navigation }) {
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [active, setIsActive] = useState({
@@ -26,15 +32,57 @@ export function RegistrationScreen({ navigation }) {
     email: false,
     password: false,
   });
+  const [show, setShow] = useState(true);
+  const [avatar, setAvatar] = useState(null);
 
   const dispatch = useDispatch();
 
-  const handleSubmit = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-    console.log(state);
-    dispatch(authRegistration(state));
+  const uploadPhotoToServer = async (avatarId) => {
+    try {
+      const response = await fetch(avatar);
+      const file = await response.blob();
+      const storageRef = ref(storage, `avatars/${avatarId}`);
+      await uploadBytes(storageRef, file);
+      const path = await getDownloadURL(ref(storage, `avatars/${avatarId}`));
+      setAvatar(path);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const updatedUser = await authSignUpUser({
+        email: state.email,
+        password: state.password,
+        login: state.login,
+      });
+      await uploadPhotoToServer(updatedUser.uid);
+      dispatch(updateAvatar(avatar));
+      dispatch(
+        authSlice.actions.updateProfile({
+          userId: updatedUser.uid,
+          login: updatedUser.displayName,
+          email: updatedUser.email,
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
     setState(initialState);
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setAvatar(result.uri);
+    }
   };
 
   return (
@@ -56,7 +104,35 @@ export function RegistrationScreen({ navigation }) {
             style={{
               ...styles.avatar,
             }}
-          ></View>
+          >
+            <Image
+              style={{ height: "100%", width: "100%", borderRadius: 16 }}
+              source={{ uri: avatar }}
+            />
+            <TouchableOpacity style={styles.addIconBox} onPress={pickImage}>
+              <Svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                fill="none"
+                viewBox="0 0 25 25"
+              >
+                <Circle
+                  cx="12.5"
+                  cy="12.5"
+                  r="12"
+                  fill="none"
+                  stroke="#BDBDBD"
+                ></Circle>
+                <Path
+                  fill="#BDBDBD"
+                  fillRule="evenodd"
+                  d="M13 6h-1v6H6v1h6v6h1v-6h6v-1h-6V6z"
+                  clipRule="evenodd"
+                ></Path>
+              </Svg>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.formTitle}>Реєстрація</Text>
           <View>
             <TextInput
@@ -134,7 +210,7 @@ export function RegistrationScreen({ navigation }) {
                 ...styles.input,
                 borderColor: active.password ? "#FF6C00" : "#E8E8E8",
               }}
-              secureTextEntry={true}
+              secureTextEntry={show}
               value={state.password}
               placeholder={"Пароль"}
               placeholderTextColor={"#cbcbcb"}
@@ -142,6 +218,17 @@ export function RegistrationScreen({ navigation }) {
                 setState((prevState) => ({ ...prevState, password: value }))
               }
             />
+            <Text
+              onPress={() => {
+                if (show) {
+                  return setShow(false);
+                }
+                return setShow(true);
+              }}
+              style={styles.textShow}
+            >
+              {show ? "Показати" : "Сховати"}
+            </Text>
           </View>
           <View
             style={{
@@ -157,11 +244,7 @@ export function RegistrationScreen({ navigation }) {
               <Text style={{ ...styles.btnTitle }}>Зареєструватись</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Login");
-              }}
-            >
+            <TouchableOpacity onPress={() => navigation.navigate("login")}>
               <Text style={styles.btnLogin}>Вже є аккаунт? Увійти</Text>
             </TouchableOpacity>
           </View>
@@ -177,15 +260,22 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "flex-end",
   },
+
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-    backgroundColor: "#E8E8E8",
     position: "absolute",
     top: -60,
-    left: "50%",
-    transform: "translateX(-60px)",
+    left: 140,
+    marginLeft: "auto",
+    marginRight: "auto",
+    width: 120,
+    height: 120,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 16,
+  },
+  addIconBox: {
+    position: "absolute",
+    right: -13,
+    bottom: 14,
   },
   input: {
     paddingLeft: 10,
@@ -212,13 +302,20 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     color: "#212121",
     fontSize: 30,
-    fontWeight: 500,
     marginBottom: 33,
   },
   inputTitle: {
     color: "#f0f8ff",
     marginBottom: 10,
     fontSize: 18,
+  },
+  textShow: {
+    color: "#000",
+    position: "absolute",
+    top: 13,
+    right: 25,
+    fontSize: 16,
+    color: "#1B4371",
   },
   submitButton: {
     marginHorizontal: 16,

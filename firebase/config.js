@@ -1,11 +1,9 @@
-// import firebase from "firebase";
-// import "firebase/auth";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/firestore";
-import "firebase/storage";
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
+import { getFirestore } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyB0z3voweFPvY757XI-P1bJ16JnwRYyBbE",
   authDomain: "react-native-70fc9.firebaseapp.com",
   projectId: "react-native-70fc9",
@@ -15,4 +13,8 @@ const firebaseConfig = {
   measurementId: "G-JB9BNJEXNH",
 };
 
-export default firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
+export const storage = getStorage(app);
+export const db = getFirestore(app);
